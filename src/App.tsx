@@ -13,11 +13,11 @@ import Navbar from "./components/navBar";
 function App() {
   return (
     <Router>
-      <div className="flex flex-col h-screen bg-gray-100">
+      <div className=" flex flex-col h-screen bg-gray-100">
         <Navbar />
-        <div className="flex flex-1">
+        <div className="flex flex-1 pt-16">
           <Sidebar />
-          <div className="flex-1 overflow-x-hidden overflow-y-auto">
+          <div className="flex-1 overflow-x-hidden overflow-y-auto h-full ml-64 pt-4">
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/schedule" element={<ScheduleCollection />} />
