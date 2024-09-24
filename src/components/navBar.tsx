@@ -19,7 +19,7 @@ export default function Navbar() {
     <nav className="flex items-center justify-between px-6 py-4 bg-white shadow-sm ml-64 fixed top-0 left-0 right-0 z-10">
       <div className="flex flex-col items-center">
         <h1 className="text-xl font-semibold">
-          Hi, {user ? `${user.firstName} ${user.lastName}` : "Guest"}
+          Hi, {user ? user.firstName : "Guest"}
         </h1>
         <p className="-ml-11 text-sm text-gray-500">Dashboard</p>
       </div>
@@ -48,7 +48,10 @@ export default function Navbar() {
         </button>
         <div className="flex items-center">
           <Avatar className="h-10 w-10">
-            <AvatarImage src={avatar} alt="User Avatar" />
+            <AvatarImage
+              src={user ? user.profileImage : avatar}
+              alt="User Avatar"
+            />
             {/* <AvatarFallback>CA</AvatarFallback> */}
           </Avatar>
           <div className="ml-3">
