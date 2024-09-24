@@ -10,6 +10,7 @@ import authorityRoutes from "./routes/authorityRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import helpRoutes from "./routes/helpRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import { checkTokenBlacklist } from "./controllers/userController.js";
 
 dotenv.config();
 
@@ -44,6 +45,11 @@ app.use("/api/tracker", garbageTrackerRoutes);
 app.use("/api/authority", authorityRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/help", helpRoutes);
+
+// Apply the middleware to protected routes
+app.get("/protected-route", checkTokenBlacklist, (req, res) => {
+  res.send("This is a protected route");
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

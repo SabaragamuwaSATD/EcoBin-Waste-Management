@@ -3,9 +3,42 @@ import { Button } from "../components/botton";
 import { Input } from "../components/input";
 import { Checkbox } from "../components/checkbox";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!agreeToTerms) {
+      alert("Please agree to the terms and conditions");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/users/register",
+        {
+          firstName,
+          lastName,
+          phone,
+          email,
+          password,
+        }
+      );
+      console.log(response.data);
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#d6e455] flex flex-col items-center justify-center p-4">
@@ -25,17 +58,39 @@ export default function SignupPage() {
       </div>
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Create your ID</h2>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
-            <Input type="text" placeholder="First name" />
-            <Input type="text" placeholder="Last name" />
+            <Input
+              type="text"
+              placeholder="First name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+            <Input
+              type="text"
+              placeholder="Last name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
           </div>
-          <Input type="email" placeholder="Email" />
-          <Input type="phone" placeholder="Phone" />
+          <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            type="phone"
+            placeholder="Phone"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
           <div className="relative">
             <Input
               type={showPassword ? "text" : "password"}
               placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <button
               type="button"
@@ -46,7 +101,11 @@ export default function SignupPage() {
             </button>
           </div>
           <div className="flex items-center space-x-2">
-            <Checkbox id="terms" />
+            <Checkbox
+              id="terms"
+              checked={agreeToTerms}
+              onChange={(e) => setAgreeToTerms(e.target.checked)}
+            />
             <label htmlFor="terms" className="text-sm text-gray-600">
               By proceeding, you agree to the{" "}
               <a href="#" className="text-[#d6e455]">
@@ -96,7 +155,7 @@ export default function SignupPage() {
         </div>
         <div className="mt-6 text-center text-sm">
           Already have an account?{" "}
-          <a href="#" className="text-[#d6e455] font-semibold">
+          <a href="/login" className="text-[#d6e455] font-semibold">
             Login Now
           </a>
         </div>

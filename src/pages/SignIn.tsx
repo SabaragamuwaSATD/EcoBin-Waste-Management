@@ -1,11 +1,34 @@
 import { useState } from "react";
+import axios from "axios";
 import { Button } from "../components/botton";
 import { Input } from "../components/input";
 import { Checkbox } from "../components/checkbox";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/users/login",
+        {
+          email,
+          password,
+        }
+      );
+      const { token } = response.data;
+      localStorage.setItem("token", token);
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#d6e455] flex flex-col items-center justify-center p-4">
@@ -25,14 +48,21 @@ export default function LoginPage() {
       </div>
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6">Login to your account</h2>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
-            <Input type="email" placeholder="Email" />
+            <Input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
           <div className="relative">
             <Input
               type={showPassword ? "text" : "password"}
               placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <button
               type="button"
@@ -95,7 +125,7 @@ export default function LoginPage() {
         </div>
         <div className="mt-6 text-center text-sm">
           Don't have an account?{" "}
-          <a href="#" className="text-[#d6e455] font-semibold">
+          <a href="/signup" className="text-[#d6e455] font-semibold">
             Get Started
           </a>
         </div>
