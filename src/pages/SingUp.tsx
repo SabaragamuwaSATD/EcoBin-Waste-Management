@@ -13,6 +13,7 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("user");
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const navigate = useNavigate();
 
@@ -31,6 +32,7 @@ export default function SignupPage() {
           phone,
           email,
           password,
+          role: role === "admin" ? "admin" : "user",
         }
       );
       console.log(response.data);
