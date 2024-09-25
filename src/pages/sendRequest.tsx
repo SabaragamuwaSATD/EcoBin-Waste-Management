@@ -1,33 +1,14 @@
 import { useEffect, useState } from "react";
 import { AlertCircle, Calendar as CalenderIcon } from "lucide-react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-import { format, parse, startOfWeek, getDay } from "date-fns";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { enUS } from "date-fns/locale/en-US";
-import opencage from "opencage-api-client";
-import { Button } from "../components/botton";
-
-const locales = {
-  "en-US": enUS,
-};
-
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek: () => startOfWeek(new Date(), { weekStartsOn: 1 }),
-  getDay,
-  locales,
-});
 
 const SendRequest = () => {
   const [wasteType, setWasteType] = useState("");
   const [weight, setWeight] = useState("");
   const [location, setLocation] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-  const [status, setStatus] = useState("");
-  const navigate = useNavigate();
+  const [editingId, setEditingId] = useState<string | null>(null); // State for editing
 
   interface Collection {
     _id: string;
@@ -47,20 +28,46 @@ const SendRequest = () => {
       return;
     }
     try {
-      await axios.post("http://localhost:5000/api/request", {
-        wasteType: wasteType,
-        weight: weight,
-        location: location,
-      });
+      if (editingId) {
+        // Update existing collection
+        await axios.put(`http://localhost:5000/api/request/${editingId}`, {
+          wasteType,
+          weight,
+          location,
+        });
+      } else {
+        // Create new collection
+        await axios.post("http://localhost:5000/api/request", {
+          wasteType,
+          weight,
+          location,
+        });
+      }
       viewCollectionDetails();
       setShowAlert(false);
 
+      // Clear the form fields
       setWasteType("");
       setWeight("");
       setLocation("");
+      setEditingId(null); // Reset editing state
     } catch (error) {
       console.error("Error Request collection", error);
     }
+  };
+
+  const handleUpdate = (collection: Collection) => {
+    setWasteType(collection.wasteType);
+    setWeight(collection.weight);
+    setLocation(collection.location);
+    setEditingId(collection._id); // Set the ID of the collection being edited
+  };
+
+  const handleCancelUpdate = () => {
+    setWasteType("");
+    setWeight("");
+    setLocation("");
+    setEditingId(null); // Reset editing state
   };
 
   const handleDelete = async (id: string) => {
@@ -147,12 +154,23 @@ const SendRequest = () => {
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-300 focus:ring focus:ring-yellow-300 focus:ring-opacity-50"
               />
             </div>
-            <button
-              type="submit"
-              className="w-full bg-yellow-500 text-black py-2 px-4 rounded-md hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50"
-            >
-              Send Request
-            </button>
+            <div className="flex space-x-4">
+              <button
+                type="submit"
+                className="w-full bg-yellow-500 text-black py-2 px-4 rounded-md hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50"
+              >
+                {editingId ? "Update Request" : "Send Request"}
+              </button>
+              {editingId && (
+                <button
+                  type="button"
+                  className="w-full bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+                  onClick={handleCancelUpdate}
+                >
+                  Cancel Update
+                </button>
+              )}
+            </div>
           </form>
         </div>
         <div className="mt-6 bg-white p-6 rounded-lg shadow">
@@ -176,15 +194,23 @@ const SendRequest = () => {
                       {" "}
                       Location : {collection.location}
                     </p>
-                    <p className="text-sm text-gray-500">
-                      Status : {collection.status}
+                    <p
+                      className={`text-sm ${
+                        collection.status === "Accepted"
+                          ? "text-green-500"
+                          : collection.status === "Rejected"
+                          ? "text-red-500"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      Status: {collection.status}
                     </p>
                   </div>
                 </div>
                 <div className="flex flex-col justify-between space-y-4">
                   <button
                     className="bg-yellow-500 text-black text-sm font-bold py-2 px-4 rounded  hover:bg-yellow-600"
-                    onClick={() => handleDelete(collection._id)}
+                    onClick={() => handleUpdate(collection)}
                   >
                     Update
                   </button>

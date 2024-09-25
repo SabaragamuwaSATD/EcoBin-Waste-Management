@@ -39,3 +39,15 @@ export const deleteRequest = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+export const updateRequest = async (req, res) => {
+  const { id } = req.params;
+  const { wasteType, weight, location, status } = req.body;
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).send(`No request with id: ${id}`);
+
+  const updatedRequest = { wasteType, weight, location, status, _id: id };
+  await Request.findByIdAndUpdate(id, updatedRequest, { new: true });
+
+  res.json(updatedRequest);
+};
