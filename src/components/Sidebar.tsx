@@ -9,6 +9,7 @@ import {
   Recycle,
   MenuIcon,
   XIcon,
+  Send,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -19,6 +20,7 @@ const Sidebar = () => {
   const menuItems = [
     { icon: LayoutDashboard, text: "Dashboard", path: "/" },
     { icon: Calendar, text: "Schedule collection", path: "/schedule" },
+    { icon: Send, text: "Send Request", path: "/request" },
     { icon: MapPin, text: "Garbage Tracker", path: "/tracker" },
     { icon: Users, text: "Authority", path: "/authority" },
     { icon: CreditCard, text: "Payment", path: "/payment" },

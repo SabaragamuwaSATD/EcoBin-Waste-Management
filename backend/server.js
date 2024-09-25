@@ -11,6 +11,7 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import helpRoutes from "./routes/helpRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import { checkTokenBlacklist } from "./controllers/userController.js";
+import requestRoutes from "./routes/requestRoutes.js";
 
 dotenv.config();
 
@@ -42,6 +43,7 @@ app.use((req, res, next) => {
 
 app.use("/api/users", userRoutes);
 app.use("/api/schedule", scheduleRoutes);
+app.use("/api/request", requestRoutes);
 app.use("/api/tracker", garbageTrackerRoutes);
 app.use("/api/authority", authorityRoutes);
 app.use("/api/payment", paymentRoutes);
