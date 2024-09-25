@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { upload } from "../configs/cloudinaryConfig.js";
 
 const tokenBlacklist = new Set();
-
+//amarangi
 // Registration route
 export const UserRegistration = [
   upload.single("profileImage"),
