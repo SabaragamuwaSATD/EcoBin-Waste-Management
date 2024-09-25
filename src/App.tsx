@@ -21,7 +21,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => (
     <Navbar />
     <div className="flex flex-1 pt-16">
       <Sidebar />
-      <div className="flex-1 overflow-x-hidden overflow-y-auto h-full ml-64 pt-4">
+      <div className=" flex-1 overflow-x-hidden overflow-y-auto h-full  pt-4 ml-0 mt-10 md:mt-0 md:ml-64">
         {children}
       </div>
     </div>

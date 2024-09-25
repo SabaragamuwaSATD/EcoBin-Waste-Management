@@ -84,8 +84,8 @@ const ScheduleCollection = () => {
   }));
 
   return (
-    <div className="p-6 flex">
-      <div className="flex-1">
+    <div className=" p-6 flex flex-col items-center lg:flex-row lg:items-start lg:justify-start">
+      <div className="flex-1 w-full lg:w-auto">
         <h1 className="text-2xl font-bold mb-6">Schedule Collection</h1>
         <div className="bg-white p-6 rounded-lg shadow">
           <form onSubmit={handleSubmit}>
@@ -217,7 +217,7 @@ const ScheduleCollection = () => {
           )}
         </div>
       </div>
-      <div className="ml-8 mr-10">
+      <div className="mt-6 lg:mt-0 lg:ml-8 lg:mr-10 w-full lg:w-auto">
         <h2 className="text-xl font-semibold mb-4">Calendar</h2>
         <Calendar
           localizer={localizer}
