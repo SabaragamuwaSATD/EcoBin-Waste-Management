@@ -7,6 +7,7 @@ import { format, parse, startOfWeek, getDay } from "date-fns";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { enUS } from "date-fns/locale/en-US";
 import opencage from "opencage-api-client";
+import { Button } from "../components/botton";
 
 const locales = {
   "en-US": enUS,
@@ -25,6 +26,7 @@ const SendRequest = () => {
   const [weight, setWeight] = useState("");
   const [location, setLocation] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [status, setStatus] = useState("");
   const navigate = useNavigate();
 
   interface Collection {
@@ -32,6 +34,8 @@ const SendRequest = () => {
     wasteType: string;
     weight: string;
     location: string;
+    status: string;
+    createdAt: string;
   }
 
   const [collections, setCollections] = useState<Collection[]>([]);
@@ -48,16 +52,34 @@ const SendRequest = () => {
         weight: weight,
         location: location,
       });
+      viewCollectionDetails();
       setShowAlert(false);
+
+      setWasteType("");
+      setWeight("");
+      setLocation("");
     } catch (error) {
       console.error("Error Request collection", error);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/request/${id}`);
+      viewCollectionDetails();
+    } catch (error) {
+      console.error("Error deleting collection", error);
     }
   };
 
   const viewCollectionDetails = async () => {
     try {
       const res = await axios.get("http://localhost:5000/api/request");
-      setCollections(res.data);
+      const sortedCollections = res.data.sort(
+        (a: Collection, b: Collection) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      setCollections(sortedCollections);
     } catch (error) {
       console.error("Error fetching Request details", error);
     }
@@ -142,7 +164,7 @@ const SendRequest = () => {
                 className="flex items-center justify-between p-4 bg-gray-100 rounded-md mb-2"
               >
                 <div className="flex items-center justify-between">
-                  <CalenderIcon className="w-5 h-5 mr-2 text-yellow-500" />
+                  <CalenderIcon className="w-5 h-5 mr-4 text-yellow-500" />
                   <div>
                     <p className="text-sm text-gray-500">
                       Garbage Type: {collection.wasteType}
@@ -154,17 +176,24 @@ const SendRequest = () => {
                       {" "}
                       Location : {collection.location}
                     </p>
+                    <p className="text-sm text-gray-500">
+                      Status : {collection.status}
+                    </p>
                   </div>
-                  {/* <div className="flex justify-end">
-                    <button
-                      className="text-yellow-500 hover:text-yellow-600 justify-end"
-                      onClick={() =>
-                        navigate("/viewCollections", { state: { collection } })
-                      }
-                    >
-                      View Details
-                    </button>
-                  </div> */}
+                </div>
+                <div className="flex flex-col justify-between space-y-4">
+                  <button
+                    className="bg-yellow-500 text-black text-sm font-bold py-2 px-4 rounded  hover:bg-yellow-600"
+                    onClick={() => handleDelete(collection._id)}
+                  >
+                    Update
+                  </button>
+                  <button
+                    className="bg-yellow-500 text-black text-sm font-bold py-2 px-4 rounded  hover:bg-yellow-600"
+                    onClick={() => handleDelete(collection._id)}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             ))

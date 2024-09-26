@@ -73,7 +73,13 @@ const ScheduleCollection = () => {
           latitude: lat,
           longitude: lng,
         });
+        viewCollectionDetails();
         setShowAlert(false);
+        setWasteType("");
+        setWeight("");
+        setLocation("");
+        setDate("");
+        setTime("");
       } else {
         console.error("No results found for the entered location");
       }
@@ -82,9 +88,18 @@ const ScheduleCollection = () => {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/schedule/${id}`);
+      viewCollectionDetails();
+    } catch (error) {
+      console.error("Error deleting collection", error);
+    }
+  };
+
   const viewCollectionDetails = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/schedule/");
+      const res = await axios.get("http://localhost:5000/api/schedule");
       setCollections(res.data);
     } catch (error) {
       console.error("Error fetching collection details", error);
@@ -94,6 +109,13 @@ const ScheduleCollection = () => {
   useEffect(() => {
     viewCollectionDetails();
   }, []);
+
+  // Sort collections by time
+  const sortedCollections = collections.sort((a, b) => {
+    const timeA = new Date(`${a.date}T${a.time}`);
+    const timeB = new Date(`${b.date}T${b.time}`);
+    return timeA.getTime() - timeB.getTime();
+  });
 
   const events = collections.map((collection) => ({
     title: collection.wasteType,
@@ -190,8 +212,8 @@ const ScheduleCollection = () => {
         </div>
         <div className="mt-6 bg-white p-6 rounded-lg shadow">
           <h2 className="text-xl font-semibold mb-4">Upcoming Collections</h2>
-          {collections.length > 0 ? (
-            collections.map((collection, index) => (
+          {sortedCollections.length > 0 ? (
+            sortedCollections.map((collection, index) => (
               <div
                 key={index}
                 className="flex items-center justify-between p-4 bg-gray-100 rounded-md mb-2"
@@ -217,16 +239,17 @@ const ScheduleCollection = () => {
                       Location : {collection.location}
                     </p>
                   </div>
-                  <div className="flex justify-end">
-                    <button
-                      className="text-yellow-500 hover:text-yellow-600 justify-end"
-                      onClick={() =>
-                        navigate("/viewCollections", { state: { collection } })
-                      }
-                    >
-                      View Details
-                    </button>
-                  </div>
+                </div>
+                <div className="flex flex-col justify-between space-y-4">
+                  <button className="bg-yellow-500 text-black text-sm font-bold py-2 px-4 rounded  hover:bg-yellow-600">
+                    Update
+                  </button>
+                  <button
+                    className="bg-yellow-500 text-black text-sm font-bold py-2 px-4 rounded  hover:bg-yellow-600"
+                    onClick={() => handleDelete(collection._id)}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             ))

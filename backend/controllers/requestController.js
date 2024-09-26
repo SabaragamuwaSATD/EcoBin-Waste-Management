@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Request from "../models/request.js";
 
 export const getRequests = async (req, res) => {
@@ -21,5 +22,20 @@ export const createRequest = async (req, res) => {
   } catch (error) {
     res.status(409).json({ message: error.message });
     console.log(request);
+  }
+};
+
+export const deleteRequest = async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id))
+      return res.status(404).send(`No request with id: ${id}`);
+
+    await Request.findByIdAndRemove(id);
+
+    res.json({ message: "Request deleted successfully." });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
   }
 };

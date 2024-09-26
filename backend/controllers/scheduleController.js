@@ -1,4 +1,5 @@
-import Schedule from '../models/Schedule.js';
+import mongoose from "mongoose";
+import Schedule from "../models/Schedule.js";
 
 export const getSchedules = async (req, res) => {
   try {
@@ -21,5 +22,20 @@ export const createSchedule = async (req, res) => {
   } catch (error) {
     res.status(409).json({ message: error.message });
     console.log(schedule);
+  }
+};
+
+export const deleteSchedule = async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id))
+      return res.status(404).send(`No request with id: ${id}`);
+
+    await Schedule.findByIdAndRemove(id);
+
+    res.json({ message: "Schedule deleted successfully." });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
   }
 };
