@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { upload } from "../configs/cloudinaryConfig.js";
 
 const tokenBlacklist = new Set();
-//amarangi
+
 // Registration route
 export const UserRegistration = [
   upload.single("profileImage"),
@@ -72,4 +72,37 @@ export const checkTokenBlacklist = (req, res, next) => {
     return res.status(401).send("Token is invalid");
   }
   next();
+};
+
+// Fetch all users route
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}, "-password"); // Exclude password from the response
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).send("Error fetching users");
+  }
+};
+
+export const updateUserRole = async (req, res) => {
+  const { id } = req.params; // Get user ID from request params
+  const { role } = req.body; // Get role from request body
+
+  try {
+    // Check if the role is valid
+    const validRoles = ["user", "admin", "staff", "driver"];
+    if (!validRoles.includes(role)) {
+      return res.status(400).send('Invalid role');
+    }
+
+    // Find the user and update their role
+    const user = await User.findByIdAndUpdate(id, { role }, { new: true }); // Update role and return updated user
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    res.status(200).json(user); // Return updated user object
+  } catch (error) {
+    res.status(500).send('Error updating user role');
+  }
 };

@@ -8,7 +8,7 @@ import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import ScheduleCollection from "./pages/ScheduleCollection";
 import GarbageTracker from "./pages/GarbageTracker";
-import Authority from "./pages/Authority";
+import StaffUsers from "./pages/Authority";
 import Payment from "./pages/Payment";
 import Help from "./pages/Help";
 import ViewCollection from "./pages/viewCollections";
@@ -17,6 +17,7 @@ import SignupPage from "./pages/SingUp";
 import LoginPage from "./pages/SignIn";
 import SendRequest from "./pages/sendRequest";
 import UserRequests from "./pages/UserRequest";
+import Users from "./pages/Users";
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => (
   <div className="flex flex-col h-screen bg-gray-100">
@@ -46,12 +47,13 @@ const AppContent = () => {
         <Route path="/" element={<Dashboard />} />
         <Route path="/schedule" element={<ScheduleCollection />} />
         <Route path="/tracker" element={<GarbageTracker />} />
-        <Route path="/authority" element={<Authority />} />
+        <Route path="/Authority" element={<StaffUsers />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/help" element={<Help />} />
         <Route path="/viewCollections" element={<ViewCollection />} />
         <Route path="/request" element={<SendRequest />} />
         <Route path="/userRequest" element={<UserRequests />} />
+        <Route path="/Users" element={<Users />} />
       </Routes>
     </AppLayout>
   );

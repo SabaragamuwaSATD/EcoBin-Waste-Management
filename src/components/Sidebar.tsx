@@ -64,9 +64,9 @@ const Sidebar = () => {
       path: "/tracker",
       roles: ["admin"],
     },
-    { icon: Users, text: "Authority", path: "/authority", roles: ["admin"] },
+    { icon: Users, text: "Authority", path: "/Authority", roles: ["admin"] },
     { icon: Truck, text: "Vehicle Management", path: "#", roles: ["admin"] },
-    { icon: User, text: "Users", path: "#", roles: ["admin"] },
+    { icon: User, text: "Users", path: "/Users", roles: ["admin"] },
     { icon: CreditCard, text: "Payment", path: "/payment", roles: ["admin"] },
     { icon: HelpCircle, text: "Help", path: "/help", roles: ["admin"] },
   ];
