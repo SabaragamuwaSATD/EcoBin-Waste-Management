@@ -24,7 +24,7 @@ const Sidebar = () => {
   const userContext = useContext(UserContext);
   const user = userContext ? userContext.user : null;
 
-  //Yenuli.....
+  //Sidebar
 
   const menuItems = [
     {
