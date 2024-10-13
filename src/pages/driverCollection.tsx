@@ -17,15 +17,39 @@ const DriverCollection = () => {
   }
 
   const [collections, setCollections] = useState<Collection[]>([]);
+  // const [newStatus,setNewStatus] = useState();
 
-  const handleUpdateStatus = async (id: string, status: string) => {
+  // Function to handle status update
+  const handleUpdateStatus = async (id: string, currentStatus: string) => {
+    let newStatus = "";
+
+    // Determine the next status based on the current status
+    if (currentStatus === "pending") {
+      newStatus = "On the Way";
+    } else if (currentStatus === "On the Way") {
+      newStatus = "In Progress";
+    } else if (currentStatus === "In Progress") {
+      newStatus = "Completed"; // Final state
+    }
+
     try {
-      await axios.put(`http://localhost:5000/api/request/${id}`, { status });
+      // Update status in the database via the API
+      await axios.put(`http://localhost:5000/api/schedule/${id}/status`, { status: newStatus });
+
+      // Fetch updated collection details from the backend
+          // Optimistically update the status locally
+    setCollections(prevCollections =>
+      prevCollections.map(collection =>
+        collection._id === id ? { ...collection, status: newStatus } : collection
+      )
+    );
       viewCollectionDetails();
     } catch (error) {
-      console.error(`Error updating collection status to ${status}`, error);
+      console.error(`Error updating collection status to ${newStatus}`, error);
     }
   };
+
+
 
   const viewCollectionDetails = async () => {
     try {
@@ -85,11 +109,26 @@ const DriverCollection = () => {
               </div>
             </div>
             <div className="flex flex-col justify-between space-y-4">
-              <button
-                className="bg-yellow-500 text-black text-sm font-bold py-2 px-4 rounded hover:bg-yellow-600"
-                onClick={() => handleUpdateStatus(collection._id, "On the Way")}
+            <button
+                className={`text-sm font-bold py-2 px-4 rounded ${
+                  collection.status === "pending"
+                    ? "bg-yellow-500 text-black hover:bg-yellow-600"
+                    : collection.status === "On the Way"
+                    ? "bg-blue-500 text-white hover:bg-blue-600"
+                    : collection.status === "In Progress"
+                    ? "bg-green-500 text-white hover:bg-green-600"
+                    : "bg-gray-500 text-white"
+                }`}
+                onClick={() => handleUpdateStatus(collection._id, collection.status)}
+                value={collection.status}
               >
-                Accept
+                {collection.status === "pending"
+                  ? "Accept"
+                  : collection.status === "On the Way"
+                  ? "On the Way"
+                  : collection.status === "In Progress"
+                  ? "In Progress"
+                  : "Completed"}
               </button>
             </div>
           </div>
