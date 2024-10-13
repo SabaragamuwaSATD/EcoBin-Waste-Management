@@ -18,6 +18,7 @@ import LoginPage from "./pages/SignIn";
 import SendRequest from "./pages/sendRequest";
 import UserRequests from "./pages/UserRequest";
 import Users from "./pages/Users";
+import DriverCollection from "./pages/driverCollection";
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => (
   <div className="flex flex-col h-screen bg-gray-100">
@@ -54,6 +55,7 @@ const AppContent = () => {
         <Route path="/request" element={<SendRequest />} />
         <Route path="/userRequest" element={<UserRequests />} />
         <Route path="/Users" element={<Users />} />
+        <Route path="/driverCollection" element={<DriverCollection />} />
       </Routes>
     </AppLayout>
   );

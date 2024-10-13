@@ -31,7 +31,7 @@ const Sidebar = () => {
       icon: LayoutDashboard,
       text: "Dashboard",
       path: "/",
-      roles: ["admin"],
+      roles: ["user", "admin"],
     },
     {
       icon: Calendar,
@@ -50,13 +50,7 @@ const Sidebar = () => {
       icon: LucideHourglass,
       text: "User Request",
       path: "/userRequest",
-      roles: ["admin"],
-    },
-    {
-      icon: Warehouse,
-      text: "Collection Centers",
-      path: "#",
-      roles: ["admin"],
+      roles: ["admin", "user", "staff"],
     },
     {
       icon: MapPin,
@@ -65,7 +59,12 @@ const Sidebar = () => {
       roles: ["admin"],
     },
     { icon: Users, text: "Authority", path: "/Authority", roles: ["admin"] },
-    { icon: Truck, text: "Vehicle Management", path: "#", roles: ["admin"] },
+    {
+      icon: Truck,
+      text: "Collection Requests",
+      path: "/driverCollection",
+      roles: ["admin", "driver"],
+    },
     { icon: User, text: "Users", path: "/Users", roles: ["admin"] },
     { icon: CreditCard, text: "Payment", path: "/payment", roles: ["admin"] },
     { icon: HelpCircle, text: "Help", path: "/help", roles: ["admin"] },

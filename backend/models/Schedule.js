@@ -9,6 +9,7 @@ const scheduleSchema = mongoose.Schema(
     location: String,
     latitude: Number,
     longitude: Number,
+    driver: String,
     status: { type: String, default: "pending" },
   },
   { timestamps: true }

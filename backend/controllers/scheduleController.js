@@ -56,6 +56,7 @@ export const updateSchedule = async (req, res) => {
     latitude,
     longitude,
     _id: id,
+    driver,
   };
   await Schedule.findByIdAndUpdate(id, updatedSchedule, { new: true });
 

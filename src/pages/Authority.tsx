@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { User, Calendar } from 'lucide-react';
+import { User } from "lucide-react";
+import { Avatar, AvatarImage } from "../components/avatar";
+import avatar from "../assest/images/avatar2.jpg";
 
 interface User {
   _id: string;
@@ -32,7 +34,8 @@ const StaffUsers: React.FC = () => {
     fetchStaffUsers();
   }, []);
 
-  if (loading) return <p className="text-center text-lg">Loading staff users...</p>;
+  if (loading)
+    return <p className="text-center text-lg">Loading staff users...</p>;
   if (error) return <p className="text-center text-red-600">{error}</p>;
 
   return (
@@ -41,7 +44,7 @@ const StaffUsers: React.FC = () => {
       <div className="bg-white p-6 rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-4">Staff</h2>
         <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
+          <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -74,18 +77,20 @@ const StaffUsers: React.FC = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">{user.phone}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">                    
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage
+                        src={user.profileImage ? user.profileImage.url : avatar}
+                        alt="User Avatar"
+                      />
+                      {/* <AvatarFallback>CA</AvatarFallback> */}
+                    </Avatar>
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap"></td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-      </div>
-      <div className="mt-6 bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-4">Attendance Calendar</h2>
-        <div className="flex justify-center">
-          <Calendar className="w-64 h-64 text-green-500" />
         </div>
       </div>
     </div>

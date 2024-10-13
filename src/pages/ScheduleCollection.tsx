@@ -28,6 +28,15 @@ const ScheduleCollection = () => {
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [showAlert, setShowAlert] = useState(false);
+  interface User {
+    _id: string;
+    firstName: string;
+    role: string;
+    email: string;
+  }
+
+  const [drivers, setDrivers] = useState<User[]>([]);
+  const [selectedDriver, setSelectedDriver] = useState<string>("");
   const [editingId, setEditingId] = useState<string | null>(null); // State for editing
   const [originalLocation, setOriginalLocation] = useState<string | null>(null);
 
@@ -40,6 +49,7 @@ const ScheduleCollection = () => {
     location: string;
     latitude: number;
     longitude: number;
+    driver: User;
   }
 
   const [collections, setCollections] = useState<Collection[]>([]);
@@ -57,6 +67,10 @@ const ScheduleCollection = () => {
       return;
     }
     try {
+      const driverDetails = drivers.find(
+        (driver) => driver._id === selectedDriver
+      );
+
       if (editingId) {
         let lat = latitude;
         let lng = longitude;
@@ -83,6 +97,7 @@ const ScheduleCollection = () => {
           location: location,
           latitude: lat,
           longitude: lng,
+          driver: driverDetails,
         });
       } else {
         const response = await opencage.geocode({
@@ -103,6 +118,7 @@ const ScheduleCollection = () => {
             location: location,
             latitude: lat,
             longitude: lng,
+            driver: driverDetails,
           });
         } else {
           console.error("No results found for the entered location");
@@ -162,6 +178,7 @@ const ScheduleCollection = () => {
 
   useEffect(() => {
     viewCollectionDetails();
+    fetchDrivers();
   }, []);
 
   // Sort collections by time
@@ -176,6 +193,19 @@ const ScheduleCollection = () => {
     start: new Date(collection.date + " " + collection.time),
     end: new Date(collection.date + " " + collection.time),
   }));
+
+  const fetchDrivers = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/users");
+      const drivers = response.data.filter(
+        (user: User) => user.role === "driver"
+      );
+      setDrivers(drivers);
+      console.log(drivers);
+    } catch (error) {
+      console.error("Error fetching drivers:", error);
+    }
+  };
 
   return (
     <div className=" p-6 flex flex-col items-center lg:flex-row lg:items-start lg:justify-start">
@@ -255,6 +285,27 @@ const ScheduleCollection = () => {
                 onChange={(e) => setLocation(e.target.value)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-300 focus:ring focus:ring-yellow-300 focus:ring-opacity-50"
               />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Select Driver
+              </label>
+              <select
+                value={selectedDriver}
+                onChange={(e) => setSelectedDriver(e.target.value)}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-300 focus:ring focus:ring-yellow-300 focus:ring-opacity-50"
+              >
+                <option value="">Select a driver</option>
+                {drivers.map((driver) => (
+                  <option
+                    key={driver._id}
+                    value={driver._id}
+                    className="text-black"
+                  >
+                    {driver ? driver.firstName : "Driver Name"}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="flex space-x-4">
               <button
