@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 
 interface User {
+  profileImage: string;
   firstName: string;
   lastName: string;
   phone: string;
@@ -35,6 +36,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           phone: string;
           email: string;
           role: string;
+          profileImage: string;
         }>(token);
         console.log(decodedToken);
         const user = {
@@ -43,6 +45,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           phone: decodedToken.phone,
           email: decodedToken.email,
           role: decodedToken.role,
+          profileImage: decodedToken.profileImage,
           token,
         };
         setUser(user);
