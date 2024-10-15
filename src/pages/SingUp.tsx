@@ -15,7 +15,17 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("user");
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfileImage(file);
+      setPreviewImage(URL.createObjectURL(file));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,16 +33,25 @@ export default function SignupPage() {
       alert("Please agree to the terms and conditions");
       return;
     }
+    const formData = new FormData();
+    formData.append("firstName", firstName);
+    formData.append("lastName", lastName);
+    formData.append("phone", phone);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("role", role === "admin" ? "admin" : "user");
+    if (profileImage) {
+      formData.append("profileImage", profileImage);
+    }
+
     try {
       const response = await axios.post(
         "http://localhost:5000/api/users/register",
+        formData,
         {
-          firstName,
-          lastName,
-          phone,
-          email,
-          password,
-          role: role === "admin" ? "admin" : "user",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
       console.log(response.data);
@@ -60,6 +79,15 @@ export default function SignupPage() {
       </div>
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Create your ID</h2>
+        {previewImage && (
+          <div className="flex justify-center mb-4">
+            <img
+              src={previewImage}
+              alt="Profile Preview"
+              className="w-24 h-24 rounded-full object-cover"
+            />
+          </div>
+        )}
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
             <Input
@@ -101,6 +129,19 @@ export default function SignupPage() {
             >
               {showPassword ? <EyeOffIcon size={20} /> : <EyeIcon size={20} />}
             </button>
+          </div>
+          <div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="block w-full text-sm text-gray-500
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-full file:border-0
+              file:text-sm file:font-semibold
+              file:bg-[#d6e455] file:text-black
+              hover:file:bg-[#c1ce4d]"
+            />
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox
