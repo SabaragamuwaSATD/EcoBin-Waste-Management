@@ -7,6 +7,7 @@ interface User {
   phone: string;
   email: string;
   token: string;
+  role: string;
 }
 
 interface UserContextType {
@@ -33,6 +34,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           lastName: string;
           phone: string;
           email: string;
+          role: string;
         }>(token);
         console.log(decodedToken);
         const user = {
@@ -40,6 +42,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           lastName: decodedToken.lastName,
           phone: decodedToken.phone,
           email: decodedToken.email,
+          role: decodedToken.role,
           token,
         };
         setUser(user);

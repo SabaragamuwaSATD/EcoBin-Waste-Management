@@ -53,7 +53,9 @@ export default function Navbar() {
           </Avatar>
           <div className="ml-3">
             <p className="text-sm font-medium">{user ? user.email : "Guest"}</p>
-            <p className="text-xs text-gray-500">Admin</p>
+            <p className="text-xs text-gray-500">
+              {user ? user.role : "Guest"}
+            </p>
           </div>
         </div>
         {user && (

@@ -6,7 +6,7 @@ const tokenBlacklist = new Set();
 
 // Registration route
 export const UserRegistration = async (req, res) => {
-  const { firstName, lastName, email, password, phone } = req.body;
+  const { firstName, lastName, email, password, phone, role } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
@@ -15,6 +15,7 @@ export const UserRegistration = async (req, res) => {
       lastName,
       email,
       phone,
+      role: role || "user",
       password: hashedPassword,
     });
     await user.save();
@@ -35,6 +36,7 @@ export const UserLogin = async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         phone: user.phone,
+        role: user.role,
       },
       req.SECRET_KEY,
       { expiresIn: "1h" }
