@@ -16,12 +16,12 @@ export default function Navbar() {
     navigate("/login");
   };
   return (
-    <nav className="flex items-center justify-between px-6 py-4 bg-white shadow-sm ml-64 fixed top-0 left-0 right-0 z-10">
-      <div className="flex flex-col items-center">
+    <nav className="flex items-center justify-between px-6 py-4 bg-white shadow-sm fixed top-0 left-0 right-0 z-10 md:ml-64">
+      <div className="hidden md:flex flex-col items-center md:flex-row md:items-center">
         <h1 className="text-xl font-semibold">
           Hi, {user ? user.firstName : "Guest"}
         </h1>
-        <p className="-ml-11 text-sm text-gray-500">Dashboard</p>
+        {/* <p className="text-sm text-gray-500 md:ml-4">Dashboard</p> */}
       </div>
       <div className="flex-1 max-w-xl mx-4">
         <div className="relative">
@@ -54,7 +54,7 @@ export default function Navbar() {
             />
             {/* <AvatarFallback>CA</AvatarFallback> */}
           </Avatar>
-          <div className="ml-3">
+          <div className="ml-3 hidden md:block">
             <p className="text-sm font-medium">{user ? user.email : "Guest"}</p>
             <p className="text-xs text-gray-500">
               {user ? user.role : "Guest"}

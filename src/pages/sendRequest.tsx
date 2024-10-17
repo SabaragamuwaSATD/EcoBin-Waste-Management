@@ -20,20 +20,15 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-const ScheduleCollection = () => {
+const SendRequest = () => {
   const [wasteType, setWasteType] = useState("");
   const [weight, setWeight] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
   const [location, setLocation] = useState("");
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
   const navigate = useNavigate();
+
   interface Collection {
     _id: string;
-    date: string;
-    time: string;
     wasteType: string;
     weight: string;
     location: string;
@@ -43,63 +38,34 @@ const ScheduleCollection = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (
-      wasteType === "" ||
-      weight === "" ||
-      date === "" ||
-      time === "" ||
-      location === ""
-    ) {
+    if (wasteType === "" || weight === "" || location === "") {
       setShowAlert(true);
       return;
     }
     try {
-      const response = await opencage.geocode({
-        key: "2182d47359f14bed9aa78e8c28690b67",
-        q: location,
+      await axios.post("http://localhost:5000/api/request", {
+        wasteType: wasteType,
+        weight: weight,
+        location: location,
       });
-
-      if (response.results.length > 0) {
-        const { lat, lng } = response.results[0].geometry;
-        setLatitude(lat);
-        setLongitude(lng);
-
-        await axios.post("http://localhost:5000/api/schedule", {
-          wasteType: wasteType,
-          weight: weight,
-          date: date,
-          time: time,
-          location: location,
-          latitude: lat,
-          longitude: lng,
-        });
-        setShowAlert(false);
-      } else {
-        console.error("No results found for the entered location");
-      }
+      setShowAlert(false);
     } catch (error) {
-      console.error("Error scheduling collection", error);
+      console.error("Error Request collection", error);
     }
   };
 
   const viewCollectionDetails = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/schedule/");
+      const res = await axios.get("http://localhost:5000/api/request");
       setCollections(res.data);
     } catch (error) {
-      console.error("Error fetching collection details", error);
+      console.error("Error fetching Request details", error);
     }
   };
 
   useEffect(() => {
     viewCollectionDetails();
   }, []);
-
-  const events = collections.map((collection) => ({
-    title: collection.wasteType,
-    start: new Date(collection.date + " " + collection.time),
-    end: new Date(collection.date + " " + collection.time),
-  }));
 
   return (
     <div className=" p-6 flex flex-col items-center lg:flex-row lg:items-start lg:justify-start">
@@ -147,28 +113,7 @@ const ScheduleCollection = () => {
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-300 focus:ring focus:ring-yellow-300 focus:ring-opacity-50"
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Date
-              </label>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-300 focus:ring focus:ring-yellow-300 focus:ring-opacity-50"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Time
-              </label>
-              <input
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-300 focus:ring focus:ring-yellow-300 focus:ring-opacity-50"
-              />
-            </div>
+
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
                 Location
@@ -184,12 +129,12 @@ const ScheduleCollection = () => {
               type="submit"
               className="w-full bg-yellow-500 text-black py-2 px-4 rounded-md hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50"
             >
-              Schedule Collection
+              Send Request
             </button>
           </form>
         </div>
         <div className="mt-6 bg-white p-6 rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-4">Upcoming Collections</h2>
+          <h2 className="text-xl font-semibold mb-4">My Requests</h2>
           {collections.length > 0 ? (
             collections.map((collection, index) => (
               <div
@@ -199,9 +144,6 @@ const ScheduleCollection = () => {
                 <div className="flex items-center justify-between">
                   <CalenderIcon className="w-5 h-5 mr-2 text-yellow-500" />
                   <div>
-                    <p className="text-sm font-medium text-gray-700">
-                      Date : {collection.date} - Time : {collection.time}
-                    </p>
                     <p className="text-sm text-gray-500">
                       Garbage Type: {collection.wasteType}
                     </p>
@@ -210,14 +152,10 @@ const ScheduleCollection = () => {
                     </p>
                     <p className="text-sm text-gray-500">
                       {" "}
-                      Date : {collection.date}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {" "}
                       Location : {collection.location}
                     </p>
                   </div>
-                  <div className="flex justify-end">
+                  {/* <div className="flex justify-end">
                     <button
                       className="text-yellow-500 hover:text-yellow-600 justify-end"
                       onClick={() =>
@@ -226,7 +164,7 @@ const ScheduleCollection = () => {
                     >
                       View Details
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             ))
@@ -235,21 +173,8 @@ const ScheduleCollection = () => {
           )}
         </div>
       </div>
-      <div className="mt-6 lg:mt-0 lg:ml-8 lg:mr-10 w-full lg:w-auto">
-        <h2 className="text-xl font-semibold mb-4">Calendar</h2>
-        <Calendar
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: 500 }}
-          views={["month", "week", "day"]}
-          defaultView="month"
-          onSelectEvent={(event: { title: string }) => alert(event.title)}
-        />
-      </div>
     </div>
   );
 };
 
-export default ScheduleCollection;
+export default SendRequest;

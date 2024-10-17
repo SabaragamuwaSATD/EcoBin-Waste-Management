@@ -15,13 +15,14 @@ import ViewCollection from "./pages/viewCollections";
 import Navbar from "./components/navBar";
 import SignupPage from "./pages/SingUp";
 import LoginPage from "./pages/SignIn";
+import SendRequest from "./pages/sendRequest";
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => (
   <div className="flex flex-col h-screen bg-gray-100">
     <Navbar />
     <div className="flex flex-1 pt-16">
       <Sidebar />
-      <div className="flex-1 overflow-x-hidden overflow-y-auto h-full ml-64 pt-4">
+      <div className=" flex-1 overflow-x-hidden overflow-y-auto h-full  pt-4 ml-0 mt-10 md:mt-0 md:ml-64">
         {children}
       </div>
     </div>
@@ -48,6 +49,7 @@ const AppContent = () => {
         <Route path="/payment" element={<Payment />} />
         <Route path="/help" element={<Help />} />
         <Route path="/viewCollections" element={<ViewCollection />} />
+        <Route path="/request" element={<SendRequest />} />
       </Routes>
     </AppLayout>
   );
