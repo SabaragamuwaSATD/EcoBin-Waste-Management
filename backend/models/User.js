@@ -1,3 +1,4 @@
+import e from "express";
 import mongoose from "mongoose";
 
 const userSchema = mongoose.Schema(
@@ -10,7 +11,11 @@ const userSchema = mongoose.Schema(
     lastName: String,
     email: String,
     password: String,
-    role: String || "user",
+    role: {
+      type: String,
+      default: "user",
+      enum: ["user", "admin", "staff", "driver"],
+    },
     phone: Number,
   },
   { timestamps: true }
