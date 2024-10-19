@@ -45,7 +45,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/schedule", scheduleRoutes);
 app.use("/api/request", requestRoutes);
 app.use("/api/tracker", garbageTrackerRoutes);
-app.use("/api/authority", authorityRoutes);
+app.use("/api/staff", authorityRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/help", helpRoutes);
 

@@ -1,14 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { User, Calendar } from 'lucide-react';
 
-const Authority = () => {
-  const staff = [
-    { name: 'Arlene McCoy', role: 'Worker', joinDate: 'Mar 1, 2022', phone: '+1565652323' },
-    { name: 'Savannah Nguyen', role: 'Worker', joinDate: 'Mar 1, 2022', phone: '+1541564656' },
-    { name: 'Kristin Watson', role: 'Worker', joinDate: 'Mar 1, 2022', phone: '+1565456523' },
-    { name: 'Cameron Williamson', role: 'Worker', joinDate: 'Mar 1, 2022', phone: '+1564565295' },
-    { name: 'Jane Cooper', role: 'Worker', joinDate: 'Mar 1, 2022', phone: '+1565656232' },
-  ];
+interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  profileImage: { url: string };
+}
+
+const StaffUsers: React.FC = () => {
+  const [staffUsers, setStaffUsers] = useState<User[]>([]); // State to hold staff users
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchStaffUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/staff");
+        setStaffUsers(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching staff users:", error);
+        setError("Failed to fetch staff users");
+        setLoading(false);
+      }
+    };
+
+    fetchStaffUsers();
+  }, []);
+
+  if (loading) return <p className="text-center text-lg">Loading staff users...</p>;
+  if (error) return <p className="text-center text-red-600">{error}</p>;
 
   return (
     <div className="p-6">
@@ -16,31 +41,41 @@ const Authority = () => {
       <div className="bg-white p-6 rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-4">Staff</h2>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+        <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Join Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Email
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Phone
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Profile Image
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {staff.map((person, index) => (
+              {staffUsers.map((user, index) => (
                 <tr key={index}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <User className="w-8 h-8 bg-gray-200 rounded-full p-1 mr-3" />
-                      <div className="text-sm font-medium text-gray-900">{person.name}</div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">{`${user.firstName} ${user.lastName}`}</div>
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{person.role}</div>
+                    <div className="text-sm text-gray-900">{user.email}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{person.joinDate}</div>
+                    <div className="text-sm text-gray-900">{user.phone}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{person.phone}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">                    
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -57,4 +92,4 @@ const Authority = () => {
   );
 };
 
-export default Authority;
+export default StaffUsers;
