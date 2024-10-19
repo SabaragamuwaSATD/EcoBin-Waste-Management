@@ -1,3 +1,4 @@
+import { useContext, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -10,21 +11,64 @@ import {
   MenuIcon,
   XIcon,
   Send,
+  LucideHourglass,
+  User,
+  Warehouse,
+  Truck,
 } from "lucide-react";
-import { useState } from "react";
+import { UserContext } from "../context/userProvider";
 
 const Sidebar = () => {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const userContext = useContext(UserContext);
+  const user = userContext ? userContext.user : null;
+
+  //Yenuli.....
 
   const menuItems = [
-    { icon: LayoutDashboard, text: "Dashboard", path: "/" },
-    { icon: Calendar, text: "Schedule collection", path: "/schedule" },
-    { icon: Send, text: "Send Request", path: "/request" },
-    { icon: MapPin, text: "Garbage Tracker", path: "/tracker" },
-    { icon: Users, text: "Authority", path: "/authority" },
-    { icon: CreditCard, text: "Payment", path: "/payment" },
-    { icon: HelpCircle, text: "Help", path: "/help" },
+    {
+      icon: LayoutDashboard,
+      text: "Dashboard",
+      path: "/",
+      roles: ["admin"],
+    },
+    {
+      icon: Calendar,
+      text: "Schedule collection",
+      path: "/schedule",
+      roles: ["admin"],
+    },
+    //User...........................................................................
+    {
+      icon: Send,
+      text: "Send Request",
+      path: "/request",
+      roles: ["admin", "user"],
+    },
+    {
+      icon: LucideHourglass,
+      text: "User Request",
+      path: "/userRequest",
+      roles: ["admin"],
+    },
+    {
+      icon: Warehouse,
+      text: "Collection Centers",
+      path: "#",
+      roles: ["admin"],
+    },
+    {
+      icon: MapPin,
+      text: "Garbage Tracker",
+      path: "/tracker",
+      roles: ["admin"],
+    },
+    { icon: Users, text: "Authority", path: "/authority", roles: ["admin"] },
+    { icon: Truck, text: "Vehicle Management", path: "#", roles: ["admin"] },
+    { icon: User, text: "Users", path: "#", roles: ["admin"] },
+    { icon: CreditCard, text: "Payment", path: "/payment", roles: ["admin"] },
+    { icon: HelpCircle, text: "Help", path: "/help", roles: ["admin"] },
   ];
 
   const toggleSidebar = () => {
@@ -34,6 +78,14 @@ const Sidebar = () => {
   const handleMenuItemClick = () => {
     setIsSidebarOpen(false);
   };
+
+  if (!user) {
+    return null; // or a loading spinner
+  }
+
+  const filteredMenuItems = menuItems.filter(
+    (item) => item.roles && item.roles.includes(user?.role)
+  );
 
   return (
     <>
@@ -60,7 +112,7 @@ const Sidebar = () => {
           <span className="text-xl font-bold text-yellow-500">EcoBin</span>
         </div>
         <nav className="flex-1 ml-5">
-          {menuItems.map((item, index) => (
+          {filteredMenuItems.map((item, index) => (
             <Link
               key={index}
               to={item.path}

@@ -16,6 +16,7 @@ import Navbar from "./components/navBar";
 import SignupPage from "./pages/SingUp";
 import LoginPage from "./pages/SignIn";
 import SendRequest from "./pages/sendRequest";
+import UserRequests from "./pages/UserRequest";
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => (
   <div className="flex flex-col h-screen bg-gray-100">
@@ -50,6 +51,7 @@ const AppContent = () => {
         <Route path="/help" element={<Help />} />
         <Route path="/viewCollections" element={<ViewCollection />} />
         <Route path="/request" element={<SendRequest />} />
+        <Route path="/userRequest" element={<UserRequests />} />
       </Routes>
     </AppLayout>
   );
